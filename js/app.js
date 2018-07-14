@@ -4,9 +4,6 @@ let resourceButton = document.getElementById('resourceType');
 let input = document.getElementById('resourceId');
 
 reqButton.addEventListener('click', function () {
-  let getMainObj = new XMLHttpRequest();
-  getMainObj.open('GET', `https://swapi.co/api/${resourceButton.value}/${input.value}/`);
-  getMainObj.send();
 
   if (resourceButton.value === 'people') {
     let peoples = new XMLHttpRequest();
