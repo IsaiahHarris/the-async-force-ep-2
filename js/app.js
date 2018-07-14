@@ -2,18 +2,31 @@
 let reqButton = document.getElementById('requestResourceButton');
 let resourceButton = document.getElementById('resourceType');
 let input = document.getElementById('resourceId');
+
 reqButton.addEventListener('click', function () {
+  let getMainObj = new XMLHttpRequest();
+  getMainObj.open('GET', `https://swapi.co/api/${resourceButton.value}/${input.value}/`);
+  getMainObj.send();
+
   if (resourceButton.value === 'people') {
-    console.log('person clicked')
     let peoples = new XMLHttpRequest();
-    peoples.open('GET', 'https://swapi.co/api/people/' + input.value +'/')
+    peoples.open('GET', 'https://swapi.co/api/people/' + input.value + '/');
     peoples.send();
+
     peoples.addEventListener('load', function () {
       const peopleObj = JSON.parse(this.responseText);
+      if (peopleObj.detail === 'Not found') {
+        let errorDiv = document.createElement('div');
+        errorDiv.innerHTML = '404 not found';
+        document.body.appendChild(errorDiv);
+        nameHeader.innerHTML = '';
+      }
+
       if (input.value > -1 || typeof input.value === 'number') {
-        let nameHeader = document.createElement('h2')
+        let nameHeader = document.createElement('h2');
         nameHeader.innerHTML = peopleObj.name;
         document.body.appendChild(nameHeader);
+
         let genderPTag = document.createElement('p');
         genderPTag.innerHTML = 'gender: ' + peopleObj.gender;
         document.body.appendChild(genderPTag);
@@ -21,9 +34,9 @@ reqButton.addEventListener('click', function () {
         let getSpecies = new XMLHttpRequest();
         getSpecies.open('GET', peopleObj.species[0]);
         getSpecies.send();
-        getSpecies.addEventListener('load', function(){
-          const speciesObj = JSON.parse(this.responseText);
 
+        getSpecies.addEventListener('load', function () {
+          const speciesObj = JSON.parse(this.responseText);
           let species = document.createElement('p');
           species.innerHTML = 'species: ' + speciesObj.name;
           document.body.appendChild(species);
@@ -33,60 +46,92 @@ reqButton.addEventListener('click', function () {
       }
     })
   } else if (resourceButton.value === 'planets') {
-    console.log('planet clicked');
+
     let planets = new XMLHttpRequest();
-    planets.open('GET', 'https://swapi.co/api/planets/' + input.value +'/')
+    planets.open('GET', 'https://swapi.co/api/planets/' + input.value + '/');
     planets.send();
+
     planets.addEventListener('load', function () {
-      const planetsObj = JSON.parse(this.responseText)
-      if(input.value > -1 || typeof input.value === 'number'){
+      const planetsObj = JSON.parse(this.responseText);
+      if (planetsObj.detail === 'Not found') {
+        let errorDiv = document.createElement('div');
+        errorDiv.innerHTML = '404 not found';
+        document.body.appendChild(errorDiv);
+        planetNameHeader.innerHTML = '';
+      }
+
+      if (input.value > -1 || typeof input.value === 'number') {
         let planetNameHeader = document.createElement('h2');
         planetNameHeader.innerHTML = planetsObj.name;
         document.body.appendChild(planetNameHeader);
         let terrainName = document.createElement('p');
-        terrainName.innerHTML= 'terrain: ' + planetsObj.terrain;
+        terrainName.innerHTML = 'terrain: ' + planetsObj.terrain;
         document.body.appendChild(terrainName);
         let populationCount = document.createElement('p');
         populationCount.innerHTML = 'population:' + planetsObj.population;
         document.body.appendChild(populationCount);
 
-         for (let i = 0; i < planetsObj.films.length; i++) {
+        for (let i = 0; i < planetsObj.films.length; i++) {
           let planetFilms = new XMLHttpRequest();
           planetFilms.open('GET', planetsObj.films[i]);
           planetFilms.send();
-          planetFilms.addEventListener('load', function(){
+
+          planetFilms.addEventListener('load', function () {
             const filmsObj = JSON.parse(this.responseText);
-            let filmsUl = document.createElement('ul')
+
+            let filmsUl = document.createElement('ul');
             let filmsLiElements = document.createElement('li');
             filmsLiElements.innerHTML = filmsObj.title;
             filmsUl.appendChild(filmsLiElements);
             document.body.appendChild(filmsUl);
           })
-         }
-      }else {
+        }
+      } else {
         alert('input must be a positive number');
       }
     })
-  }else if(resourceButton.value === 'starships'){
-    console.log('starships clicked');
+  } else if (resourceButton.value === 'starships') {
     let starships = new XMLHttpRequest();
-    starships.open('GET','https://swapi.co/api/starships/' + input.value + '/')
+    starships.open('GET', 'https://swapi.co/api/starships/' + input.value + '/');
     starships.send();
-    starships.addEventListener('load', function(){
+
+    starships.addEventListener('load', function () {
       const starshipsObj = JSON.parse(this.responseText);
-      if(input.value > -1 || typeof input.value === 'number'){
-          let starshipName = document.createElement('h2');
-          starshipName.innerHTML = starshipsObj.name;
-          document.body.appendChild(starshipName);
-          let starshipManufacturer = document.createElement('p')
-          starshipManufacturer.innerHTML = 'manufacturer: ' + starshipsObj.manufacturer;
-          document.body.appendChild(starshipManufacturer);
-          let starshipClass = document.createElement('p');
-          starshipClass.innerHTML = 'class: ' + starshipsObj.starship_class;
-          document.body.appendChild(starshipClass);
+
+      if (starshipsObj.detail === 'Not found') {
+        let errorDiv = document.createElement('div');
+        errorDiv.innerHTML = '404 not found';
+        document.body.appendChild(errorDiv);
+        starshipName.innerHTML = '';
+      }
+
+      if (input.value > -1 || typeof input.value === 'number') {
+        let starshipName = document.createElement('h2');
+        starshipName.innerHTML = starshipsObj.name;
+        document.body.appendChild(starshipName);
+        let starshipManufacturer = document.createElement('p');
+        starshipManufacturer.innerHTML = 'manufacturer: ' + starshipsObj.manufacturer;
+        document.body.appendChild(starshipManufacturer);
+        let starshipClass = document.createElement('p');
+        starshipClass.innerHTML = 'class: ' + starshipsObj.starship_class;
+        document.body.appendChild(starshipClass);
+
+        for (let i = 0; i < starshipsObj.films.length; i++) {
+          let starshipFilms = new XMLHttpRequest();
+          starshipFilms.open('GET', starshipsObj.films[i]);
+          starshipFilms.send();
+
+          starshipFilms.addEventListener('load', function () {
+            const starshipFilmsObj = JSON.parse(this.responseText);
+
+            let sfilmsUl = document.createElement('ul');
+            let sfilmsLiElements = document.createElement('li');
+            sfilmsLiElements.innerHTML = starshipFilmsObj.title;
+            sfilmsUl.appendChild(sfilmsLiElements);
+            document.body.appendChild(sfilmsUl);
+          })
+        }
       }
     })
   }
-
-
 })
