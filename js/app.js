@@ -35,36 +35,55 @@ reqButton.addEventListener('click', function () {
   } else if (resourceButton.value === 'planets') {
     console.log('planet clicked');
     let planets = new XMLHttpRequest();
-    planets.open('GET', 'https://swapi.co/api/planets/')
+    planets.open('GET', 'https://swapi.co/api/planets/' + input.value +'/')
     planets.send();
     planets.addEventListener('load', function () {
       const planetsObj = JSON.parse(this.responseText)
       if(input.value > -1 || typeof input.value === 'number'){
         let planetNameHeader = document.createElement('h2');
-        planetNameHeader.innerHTML = planetsObj.results[input.value].name;
+        planetNameHeader.innerHTML = planetsObj.name;
         document.body.appendChild(planetNameHeader);
         let terrainName = document.createElement('p');
-        terrainName.innerHTML= 'terrain: ' + planetsObj.results[input.value].terrain;
+        terrainName.innerHTML= 'terrain: ' + planetsObj.terrain;
         document.body.appendChild(terrainName);
         let populationCount = document.createElement('p');
-        populationCount.innerHTML = 'population:' + planetsObj.results[input.value].population;
+        populationCount.innerHTML = 'population:' + planetsObj.population;
         document.body.appendChild(populationCount);
 
-        let planetFilms = new XMLHttpRequest();
-        planetFilms.open('GET', planetsObj.films);
-        planetFilms.send();
-        planetFilms.addEventListener('load', function(){
-          const filmsObj = JSON.parse(this.responseText);
-          let filmsUl = document.createElement('ul');
-          let filmsLiElements = document.createElement('li');
-          filmsLiElements.innerHTML = filmsObj.name;
-          filmsLiElements.appendChild(filmsUl);
-          filmsUl.appendChild(filmsLiElements);
-          document.body.appendChild(filmsLiElements);
-        })
-
+         for (let i = 0; i < planetsObj.films.length; i++) {
+          let planetFilms = new XMLHttpRequest();
+          planetFilms.open('GET', planetsObj.films[i]);
+          planetFilms.send();
+          planetFilms.addEventListener('load', function(){
+            const filmsObj = JSON.parse(this.responseText);
+            let filmsUl = document.createElement('ul')
+            let filmsLiElements = document.createElement('li');
+            filmsLiElements.innerHTML = filmsObj.title;
+            filmsUl.appendChild(filmsLiElements);
+            document.body.appendChild(filmsUl);
+          })
+         }
       }else {
         alert('input must be a positive number');
+      }
+    })
+  }else if(resourceButton.value === 'starships'){
+    console.log('starships clicked');
+    let starships = new XMLHttpRequest();
+    starships.open('GET','https://swapi.co/api/starships/' + input.value + '/')
+    starships.send();
+    starships.addEventListener('load', function(){
+      const starshipsObj = JSON.parse(this.responseText);
+      if(input.value > -1 || typeof input.value === 'number'){
+          let starshipName = document.createElement('h2');
+          starshipName.innerHTML = starshipsObj.name;
+          document.body.appendChild(starshipName);
+          let starshipManufacturer = document.createElement('p')
+          starshipManufacturer.innerHTML = 'manufacturer: ' + starshipsObj.manufacturer;
+          document.body.appendChild(starshipManufacturer);
+          let starshipClass = document.createElement('p');
+          starshipClass.innerHTML = 'class: ' + starshipsObj.starship_class;
+          document.body.appendChild(starshipClass);
       }
     })
   }
